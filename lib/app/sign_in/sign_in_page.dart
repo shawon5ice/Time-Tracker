@@ -1,8 +1,19 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:time_tracker_app/app/home/home_page.dart';
 import '../widgets/custom_buttons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({Key? key}) : super(key: key);
+
+  void _signInAnonymously(BuildContext context) async {
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInAnonymously();
+    if(userCredential.user != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,11 +25,11 @@ class SignInPage extends StatelessWidget {
         ),
         elevation: 2,
       ),
-      body: buildContent(),
+      body: buildContent(context),
     );
   }
 
-  Widget buildContent() {
+  Widget buildContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -78,7 +89,7 @@ class SignInPage extends StatelessWidget {
           ),
           NormalElevatedButton(
             buttonText: 'Go Anonymous',
-            callback: () {},
+            callback: ()=>_signInAnonymously(context),
             backgroundColor: const Color(0xFFD7E26B),
             textColor: Colors.black87,
           ),

@@ -66,8 +66,11 @@ class NormalElevatedButton extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 8),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            SizedBox(
+              height: 36,
+            ),
             Text(
               buttonText,
               style: TextStyle(fontSize: 16, color: textColor),
