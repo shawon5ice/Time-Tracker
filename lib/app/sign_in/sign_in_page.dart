@@ -5,14 +5,19 @@ import '../widgets/custom_buttons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SignInPage extends StatelessWidget {
-  const SignInPage({Key? key}) : super(key: key);
+  final Function(User? ) onsingIn;
+  SignInPage({required this.onsingIn});
+  
 
-  void _signInAnonymously(BuildContext context) async {
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInAnonymously();
-    if(userCredential.user != null) {
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
-    };
+
+  Future<void> _signInAnonymously(BuildContext context) async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInAnonymously();
+      onsingIn(userCredential.user);
+    } on Exception catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -89,7 +94,7 @@ class SignInPage extends StatelessWidget {
           ),
           NormalElevatedButton(
             buttonText: 'Go Anonymous',
-            callback: ()=>_signInAnonymously(context),
+            callback: () => _signInAnonymously(context),
             backgroundColor: const Color(0xFFD7E26B),
             textColor: Colors.black87,
           ),
