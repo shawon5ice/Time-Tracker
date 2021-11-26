@@ -14,6 +14,15 @@ class SignInPage extends StatelessWidget {
     }
   }
 
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    try {
+      await auth.signInWithGoogle();
+    } on Exception catch (e) {
+      final snackBar = SnackBar(content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,9 +56,7 @@ class SignInPage extends StatelessWidget {
           SocialElevatedButton(
               buttonText: 'Sign in With Google',
               imgText: 'google-logo.png',
-              callback: () {
-                print("Sign in with Google");
-              },
+              callback: () => _signInWithGoogle(context),
               backgroundColor: Colors.white,
               textColor: Colors.black87),
           const SizedBox(
