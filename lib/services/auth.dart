@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class CustomUser {
@@ -12,6 +13,7 @@ abstract class AuthBase {
   Future<CustomUser> currentUser();
   Future<CustomUser> signInAnonymously();
   Future<CustomUser> signInWithGoogle();
+  Future<CustomUser> signInWithFacebook();
   Future<void> signOut();
 }
 
@@ -41,8 +43,23 @@ class Auth implements AuthBase {
   }
 
   @override
+  Future<CustomUser> signInWithFacebook() async {
+    final LoginResult loginResult =
+        await FacebookAuth.instance.login(permissions: ['public_profile']);
+    if (loginResult.accessToken != null) {
+      final authResult = await _firebaseAuth.signInWithCredential(
+          FacebookAuthProvider.credential(loginResult.accessToken!.token));
+      return _userFromFirebase(authResult.user);
+    } else {
+      throw PlatformException(
+        code: 'ERROR_ABORTED_BY_USER',
+        message: 'Sign in aborted by user',
+      );
+    }
+  }
+
+  @override
   Future<CustomUser> signInWithGoogle() async {
-    
     final googleSignInAccount = await _googleSignIn.signIn();
     if (googleSignInAccount != null) {
       final GoogleSignInAuthentication googleSignInAuthentication =
@@ -71,7 +88,10 @@ class Auth implements AuthBase {
 
   @override
   Future<void> signOut() async {
-    await _googleSignIn.signOut();
+    final googleSignIn = GoogleSignIn();
+    await googleSignIn.signOut();
+    final facebookLogIn = FacebookAuth.instance;
+    await facebookLogIn.logOut();
     await _firebaseAuth.signOut();
   }
 }

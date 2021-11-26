@@ -23,6 +23,15 @@ class SignInPage extends StatelessWidget {
     }
   }
 
+  Future<void> _signInWithFacebook(BuildContext context) async {
+    try {
+      await auth.signInWithFacebook();
+    } on Exception catch (e) {
+      final snackBar = SnackBar(content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,9 +74,7 @@ class SignInPage extends StatelessWidget {
           SocialElevatedButton(
             buttonText: 'Sign in With Facebook',
             imgText: 'facebook-logo.png',
-            callback: () {
-              print("Sign in with Facebook");
-            },
+            callback: () => _signInWithFacebook(context),
             backgroundColor: Colors.indigo,
             textColor: Colors.white,
           ),
