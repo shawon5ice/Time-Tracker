@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:time_tracker_app/services/auth.dart';
+import 'package:time_tracker_app/services/auth_provider.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key, required this.auth}) : super(key: key);
-  final AuthBase auth;
-  Future<void> _signOut() async {
+  
+  Future<void> _signOut(BuildContext context) async {
     try {
+      final auth = AuthProvider.of(context);
       auth.signOut();
     } on Exception catch (e) {
       print(e);
@@ -19,7 +20,7 @@ class HomePage extends StatelessWidget {
         title: const Text('Home Page'),
         actions: [
           TextButton(
-            onPressed: _signOut,
+            onPressed: ()=>_signOut(context),
             child: const Text(
               'Log Out',
               style: TextStyle(color: Colors.white),
