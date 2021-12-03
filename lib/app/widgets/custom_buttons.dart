@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class SocialElevatedButton extends StatelessWidget {
   final String buttonText;
@@ -49,7 +50,8 @@ class NormalElevatedButton extends StatelessWidget {
   final String buttonText;
   final Color backgroundColor;
   final Color textColor;
-  final VoidCallback callback;
+  final callback;
+  final isLoading;
 
   const NormalElevatedButton({
     Key? key,
@@ -57,11 +59,16 @@ class NormalElevatedButton extends StatelessWidget {
     required this.callback,
     required this.backgroundColor,
     required this.textColor,
+    required this.isLoading,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        onSurface: Colors.indigo,
+        primary: backgroundColor,
+      ),
       onPressed: callback,
       child: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 8),
@@ -71,18 +78,20 @@ class NormalElevatedButton extends StatelessWidget {
             SizedBox(
               height: 36,
             ),
-            Text(
-              buttonText,
-              style: TextStyle(fontSize: 16, color: textColor),
-            ),
+            !isLoading
+                ? Text(
+                    buttonText,
+                    style: TextStyle(fontSize: 16, color: textColor),
+                  )
+                : SpinKitFadingCircle(
+                    color: Colors.indigo,
+                    size: 36,
+                  ),
             SizedBox(
               height: 36,
             )
           ],
         ),
-      ),
-      style: ElevatedButton.styleFrom(
-        primary: backgroundColor,
       ),
     );
   }

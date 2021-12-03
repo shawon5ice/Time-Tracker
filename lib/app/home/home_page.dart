@@ -1,13 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:time_tracker_app/services/auth.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({Key? key, required this.auth}) : super(key: key);
+  const HomePage({Key? key, required this.auth}) : super(key: key);
   final AuthBase auth;
   Future<void> _signOut() async {
     try {
-      FirebaseAuth.instance.signOut();
+      auth.signOut();
     } on Exception catch (e) {
       print(e);
     }
@@ -17,18 +16,18 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: const Text('Home Page'),
         actions: [
           TextButton(
             onPressed: _signOut,
-            child: Text(
+            child: const Text(
               'Log Out',
               style: TextStyle(color: Colors.white),
             ),
           )
         ],
       ),
-      body: Center(
+      body:const Center(
         child: Text("Home Page"),
       ),
     );

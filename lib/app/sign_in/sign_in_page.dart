@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:time_tracker_app/app/email_singIN/email_signin_page.dart';
 import 'package:time_tracker_app/services/auth.dart';
+import '../email_singIN/email_signin_page.dart';
 import '../widgets/custom_buttons.dart';
 
 class SignInPage extends StatelessWidget {
@@ -21,6 +23,14 @@ class SignInPage extends StatelessWidget {
       final snackBar = SnackBar(content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
+  }
+
+  void _signInWithEmail(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => EmailSignInPage(auth: auth,),
+      ),
+    );
   }
 
   Future<void> _signInWithFacebook(BuildContext context) async {
@@ -83,9 +93,10 @@ class SignInPage extends StatelessWidget {
           ),
           NormalElevatedButton(
             buttonText: 'Sign in with Email',
-            callback: () {},
+            callback: () => _signInWithEmail(context),
             backgroundColor: const Color(0xFF016D60),
             textColor: Colors.white,
+            isLoading: false,
           ),
           const SizedBox(
             height: 20,
@@ -105,6 +116,7 @@ class SignInPage extends StatelessWidget {
             callback: () => _signInAnonymously(context),
             backgroundColor: const Color(0xFFD7E26B),
             textColor: Colors.black87,
+            isLoading: false,
           ),
         ],
       ),
