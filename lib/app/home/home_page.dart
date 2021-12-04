@@ -1,13 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker_app/services/auth.dart';
-import 'package:time_tracker_app/services/auth_provider.dart';
 
 class HomePage extends StatelessWidget {
-  
   Future<void> _signOut(BuildContext context) async {
     try {
-      final auth = AuthProvider.of(context);
-      auth.signOut();
+      final auth = Provider.of<AuthBase>(context, listen: false);
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Something went worng'),
+          content: Text('Do you want to exit now?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context, 'OK');
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await auth.signOut();
+                Navigator.pop(context, 'OK');
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        ),
+      );
     } on Exception catch (e) {
       print(e);
     }
@@ -20,7 +40,7 @@ class HomePage extends StatelessWidget {
         title: const Text('Home Page'),
         actions: [
           TextButton(
-            onPressed: ()=>_signOut(context),
+            onPressed: () => _signOut(context),
             child: const Text(
               'Log Out',
               style: TextStyle(color: Colors.white),
@@ -28,7 +48,7 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
-      body:const Center(
+      body: const Center(
         child: Text("Home Page"),
       ),
     );

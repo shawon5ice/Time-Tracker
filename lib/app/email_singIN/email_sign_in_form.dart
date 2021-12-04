@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker_app/app/email_singIN/validators.dart';
 import 'package:time_tracker_app/app/widgets/custom_buttons.dart';
 import 'package:time_tracker_app/services/auth.dart';
@@ -9,30 +10,36 @@ enum EmailSignInFormType {
 }
 
 class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidators {
-  EmailSignInForm({Key? key, required this.auth}) : super(key: key);
-
-  final AuthBase auth;
-
   @override
   _EmailSignInFormState createState() => _EmailSignInFormState();
 }
 
 class _EmailSignInFormState extends State<EmailSignInForm> {
+  //textfield controller variable
   late TextEditingController emailController;
   late TextEditingController passwordController;
+
+  //state controller variable
   bool _submitButtonEnabled = false;
   bool _formSubmitted = false;
   bool _isLoading = false;
+
+  //textfield focus controller variable
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
 
+  //form type controller variable
   EmailSignInFormType formType = EmailSignInFormType.signIn;
+
+  //getter variable to get value of the textfield using textFieldController
   String get _email => emailController.text;
   String get _password => passwordController.text;
 
   @override
   void initState() {
     super.initState();
+
+    //initializing textFieldController
     emailController = TextEditingController();
     passwordController = TextEditingController();
 
@@ -56,11 +63,13 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
 
   @override
   dispose() {
+    super.dispose();
     emailController.dispose();
     passwordController.dispose();
   }
 
-  void _submit() async {
+  void _submit(BuildContext context) async {
+    final auth = Provider.of<AuthBase>(context, listen: false);
     setState(() {
       _formSubmitted = true;
       _isLoading = true;
@@ -68,9 +77,9 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
     try {
       await Future.delayed(Duration(seconds: 3));
       if (EmailSignInFormType.register == formType) {
-        await widget.auth.createUserWithEmailAndPassword(_email, _password);
+        await auth.createUserWithEmailAndPassword(_email, _password);
       } else {
-        await widget.auth.singInWithEmailAndPassword(_email, _password);
+        await auth.singInWithEmailAndPassword(_email, _password);
       }
       Navigator.of(context).pop();
     } catch (e) {
@@ -144,14 +153,15 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       SizedBox(
         height: 10,
       ),
-      _passwordTextField(),
+      _passwordTextField(context),
       SizedBox(
         height: 10,
       ),
       NormalElevatedButton(
         buttonText: primaryText,
         textColor: Colors.white,
-        callback: _submitButtonEnabled && !_isLoading ? _submit : null,
+        callback:
+            _submitButtonEnabled && !_isLoading ? () => _submit(context) : null,
         backgroundColor: Colors.indigo,
         isLoading: _isLoading,
       ),
@@ -167,11 +177,11 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
     ];
   }
 
-  TextField _passwordTextField() {
+  TextField _passwordTextField(BuildContext context) {
     bool _showErrorText =
         _formSubmitted && !widget.emailValidator.isValid(_password);
     return TextField(
-      onEditingComplete: _submitButtonEnabled? _submit :null,
+      onEditingComplete: _submitButtonEnabled ? () => _submit(context) : null,
       focusNode: _passwordFocusNode,
       controller: passwordController,
       obscureText: true,
